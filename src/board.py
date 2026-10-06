@@ -22,5 +22,6 @@ class Board:
                       [1,1,1,1,1,1,1,1],
                       [4,2,3,5,6,3,2,4]]
 
-board = Board()
-print(board.state) 
+if __name__ == "__main__":
+    board = Board()
+    print(board.state)

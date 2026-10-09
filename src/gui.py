@@ -15,6 +15,7 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 green = (0, 255, 0)
 brown = (139, 69, 19)
+red = (255, 0, 0)
 
 # create the screen
 screen = pygame.display.set_mode((width, height))
@@ -74,8 +75,20 @@ def draw_move_dots(selected_piece, selected_pos):
         return
     valid_moves = get_valid_moves(selected_piece, selected_pos[0], selected_pos[1])
     for (r, c) in valid_moves:
-        center = (c * square_size + square_size // 2, r * square_size + square_size // 2)
-        pygame.draw.circle(screen, green, center, square_size // 8)
+        if board[r][c] is not None:
+            pygame.draw.rect(screen, red, (c * square_size, r * square_size, square_size, square_size), 5)
+        else:
+            center = (c * square_size + square_size // 2, r * square_size + square_size // 2)
+            pygame.draw.circle(screen, green, center, square_size // 8)
+
+def draw_check_highlight():
+    if is_check(current_player):
+        for r in range(8):
+            for c in range (8):
+                piece = board[r][c]
+                if piece and piece.color == current_player and piece.type == "king":
+                    pygame.draw.rect(screen, red,
+                                     (c * square_size, r * square_size, square_size, square_size), 5)
     
 
 
@@ -248,6 +261,7 @@ def main():
                 handle_click(pygame.mouse.get_pos())
         draw_board()
         draw_move_dots(selected_piece, selected_pos)
+        draw_check_highlight()
         draw_pieces()
         pygame.display.flip()
 

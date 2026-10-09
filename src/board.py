@@ -26,6 +26,7 @@ SYMBOLS = {
     -5: "♛",  # black queen
     -6: "♚",  # black king
 }
+
 class Board:
     def __init__(self):
         self.state = [[-4,-2,-3,-5,-6,-3,-2,-4],
@@ -36,13 +37,21 @@ class Board:
                       [0,0,0,0,0,0,0,0],
                       [1,1,1,1,1,1,1,1],
                       [4,2,3,5,6,3,2,4]]
+
+        self.turn = "W"
+        self.castling = "KQkq"
+        self.en_passant = None
+        self.halfmove = 0
+        self.fullmove = 1
+        
     def __str__(self):
         line=[]
         for row in self.state:
             line.append(" ".join(str(SYMBOLS[x])for x in row))
         return "\n".join(line)
-
+        
 if __name__ == "__main__":
     board = Board()
     print(board)
+    print(board.turn, board.castling, board.en_passant, board.halfmove, board.fullmove)
 

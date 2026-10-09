@@ -1,12 +1,22 @@
-white_pawn = 1
-white_knight = 2
-white_bishop = 3
-white_rook = 4
-white_queen = 5
-white_king = 6
-black_pawn = -1
-black_knight = -2
-black_bishop = -3
-black_rook = -4
-black_queen = -5
-black_king = -6
+# Empty square
+EMPTY = 0
+
+# White pieces
+WHITE_PAWN = 1
+WHITE_KNIGHT = 2
+WHITE_BISHOP = 3
+WHITE_ROOK = 4
+WHITE_QUEEN = 5
+WHITE_KING = 6
+
+# Black pieces
+BLACK_PAWN = -1
+BLACK_KNIGHT = -2
+BLACK_BISHOP = -3
+BLACK_ROOK = -4
+BLACK_QUEEN = -5
+BLACK_KING = -6
+
+# Sides
+WHITE = 1
+BLACK = -1

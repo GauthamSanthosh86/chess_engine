@@ -3,6 +3,7 @@ import sys
 
 import pygame
 
+
 pygame.init()
 
 # constants
@@ -48,6 +49,8 @@ current_player = "white"
 selected_piece = None
 selected_pos = None
 game_over = False
+promotion_pending = None
+PROMOTION_OPTIONS = ["queen", "rook", "bishop", "knight"]
 
 
 def init_board():
@@ -91,6 +94,18 @@ def draw_check_highlight():
                                      (c * square_size, r * square_size, square_size, square_size), 5)
     
 
+def draw_promo_menu():
+    if promotion_pending is None:
+        return
+
+    color = promotion_pending[2]
+    options = PROMOTION_OPTIONS
+
+    for i in range(4):
+        x=(2+i)*square_size
+        y=3*square_size
+        pygame.draw.rect(screen, (200, 200, 200), (x,y, square_size, square_size))
+        screen.blit(load_image(color, options[i]), (x,y))
 
 
 def draw_pieces():
@@ -203,15 +218,32 @@ def has_any_legal_move(color):
                     return True
     return False
 
+def finish_turn():
+    global current_player, game_over
+    current_player = "black" if current_player == "white" else "white"
+    if not has_any_legal_move(current_player):
+        game_over = True
+        if is_check(current_player):
+            print(f"Checkmate! {current_player.capitalize()} loses.")
+        else:
+            print("Stalemate!")
 
 def handle_click(pos):
-    global selected_piece, selected_pos, current_player, game_over
+    global selected_piece, selected_pos, current_player, game_over, promotion_pending
     if game_over:
         return
 
     col = pos[0] // square_size
     row = pos[1] // square_size
     if not (0 <= row < 8 and 0 <= col < 8):
+        return
+    if promotion_pending is not None:
+        pawn_row, pawn_col, color = promotion_pending
+        if row == 3 and 2 <= col <= 5:
+            pro_piece = PROMOTION_OPTIONS[col - 2]
+            board[pawn_row][pawn_col] = ChessPiece(color, pro_piece)
+            promotion_pending = None
+            finish_turn()
         return
 
     clicked = board[row][col]
@@ -235,17 +267,13 @@ def handle_click(pos):
 
         # pawn promotion
         if selected_piece.type == "pawn" and (row == 0 or row == 7):
-            board[row][col] = ChessPiece(selected_piece.color, "queen")
+            promotion_pending = (row, col, selected_piece.color)
+            selected_piece = None
+            selected_pos = None
+            return
 
-        current_player = "black" if current_player == "white" else "white"
-
-        if not has_any_legal_move(current_player):
-            game_over = True
-            if is_check(current_player):
-                print(f"Checkmate! {current_player.capitalize()} loses.")
-            else:
-                print("Stalemate!")
-
+        finish_turn()
+       
     selected_piece = None
     selected_pos = None
 
@@ -263,6 +291,7 @@ def main():
         draw_move_dots(selected_piece, selected_pos)
         draw_check_highlight()
         draw_pieces()
+        draw_promo_menu()
         pygame.display.flip()
 
 
